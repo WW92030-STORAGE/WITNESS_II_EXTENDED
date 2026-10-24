@@ -135,8 +135,6 @@ void setup() {
   matrixsetup();
   disp(grid0);
 
-  flashbyte = 6;
-
   // PROJECT SETUP
   if (flashbyte == 2) {
     initVorPoints();
