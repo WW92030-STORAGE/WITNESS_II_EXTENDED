@@ -10,7 +10,7 @@ The library used is this one: https://github.com/mrcodetastic/ESP32-HUB75-Matrix
 
 # DEPENDENCIES
 
-- RTTI enabled
+- RTTI enabled (probably? see if it works without it, please let me know if it does or does not.)
 
 The following libraries:
 - https://github.com/WW92030-STORAGE/WITNESS_CLONE_II
@@ -18,6 +18,7 @@ The following libraries:
 - https://github.com/WW92030-STORAGE/miscellaneous/tree/main/FIRE
 - https://github.com/WW92030-STORAGE/MANDELBROT
 - https://github.com/WW92030-STORAGE/miscellaneous/tree/main/CONWAY
+- https://github.com/WW92030-STORAGE/miscellaneous/tree/main/boids
 
 # COMPILING THIS
 

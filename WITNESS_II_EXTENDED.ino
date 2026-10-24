@@ -29,7 +29,7 @@ vector<vector<vector<bool>>> animation{grid0, grid1, grid2, grid3, grid4, grid5,
 uint8_t flashbyte = 0;
 
 // The number of MODES is one more than the number of slides in total -- you have one default face slide and (MODES) custom slides which you flip through by rebooting.
-constexpr int MODES = 6;
+constexpr int MODES = 7;
 
 void eeprom_setup() {
   EEPROM.begin(EEPROM_SIZE);
@@ -123,10 +123,19 @@ void initConwayFace() {
 
 // END CONWAY INFO
 
+// BEGIN BOIDS INFO
+
+#include <Boids.h>
+Boids::Boids boids;
+
+// END BOIDS INFO
+
 void setup() {
   eeprom_setup();
   matrixsetup();
   disp(grid0);
+
+  flashbyte = 6;
 
   // PROJECT SETUP
   if (flashbyte == 2) {
@@ -138,6 +147,10 @@ void setup() {
   } else if (flashbyte == 5) {
     initConwayFace();
     delay(2000);
+  } else if (flashbyte == 6) {
+    for (int i = 0; i < 64; i++) boids.add({Boids::rand01() * 2 - 1, Boids::rand01() - 0.5});
+    boids.TR = {1, 0.5};
+    boids.BL = {-1, -0.5};
   }
 }
 
@@ -341,6 +354,38 @@ void runConway(int dd = 20, bool flip = false, bool rainbow = true) {
 
 // END CONWAY INFO
 
+// BEGIN BOIDS INFO
+
+void runBoids(bool rainbow = false, bool velocity = true) {
+  matrixpanel->fillScreenRGB888(0, 0, 0);
+  period = 64;
+  timestep = (timestep + 1) % period;
+  uint16_t color = matrixpanel->color565(255, 255, 255);
+  if (rainbow) color = fullhue((256 * 6 * timestep) / period);
+  boids.update();
+
+  for (auto b : boids.boids) {
+    auto x = b.pos;
+    auto v = b.vel;
+    int xPos = (x.x + 1) * 32;
+    int yPos = (x.y + 0.5) * 32;
+
+    if (velocity) {
+      auto pol = v.rect2polar();
+      int theIndex = pol.y * (256 * 6);
+      if (theIndex < 0) theIndex += 256 * 6;
+      uint16_t unitcolor = fullhue(theIndex);
+      color = unitcolor;
+    }
+
+    for (int offset = 0; offset < 64; offset += 64) matrixpanel->drawPixel(xPos + offset, yPos, color);
+  }
+
+  delay(50);
+}
+
+// END BOIDS INFO
+
 void loop() {
   bool printOut = false;
   if (flashbyte == 0) {
@@ -360,6 +405,8 @@ void loop() {
     runConway();
   } else if (flashbyte == 5) {
     runConway(50, true, false);
+  } else if (flashbyte == 6) {
+    runBoids();
   } else {
     randTests();
     printOut = true;
