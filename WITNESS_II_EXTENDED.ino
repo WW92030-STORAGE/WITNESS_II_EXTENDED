@@ -378,7 +378,7 @@ void runBoids(bool rainbow = false, bool velocity = true) {
       color = unitcolor;
     }
 
-    for (int offset = 0; offset < 64; offset += 64) matrixpanel->drawPixel(xPos + offset, yPos, color);
+    for (int offset = 0; offset <= 64; offset += 64) matrixpanel->drawPixel(xPos + offset, yPos, color);
   }
 
   delay(50);
